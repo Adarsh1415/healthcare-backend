@@ -29,27 +29,6 @@ List doctors
 
 👨‍⚕️ Default Admin User auto-created at startup
 
-🏗️ Project Structure
-project/
-│
-├─ app.py                  # Flask app initialization
-├─ config.py               # App & database config
-│
-├─ models/
-│   └─ user.py             # SQLAlchemy models (User, Doctor, Department)
-│
-├─ routes/
-│   ├─ auth_routes.py      # Auth routes (/register, /login)
-│   └─ admin_routes.py     # Admin routes (departments, doctors)
-│
-├─ services/
-│   ├─ auth_service.py     # Auth business logic
-│   └─ admin_service.py    # Department & doctor business logic
-│
-├─ utils/
-│   └─ decorators.py       # Custom JWT + RBAC decorators
-│
-└─ README.md               # Project documentation
 
 ⚙️ Installation & Setup
 1. Clone the repo
@@ -73,12 +52,6 @@ SQLALCHEMY_DATABASE_URI=sqlite:///site.db
 5. Run the app
 python app.py
 
-
-A default admin user is created:
-
-Username: admin
-
-Password: password
 
 🚀 API Endpoints
 🔐 Auth Routes
@@ -105,13 +78,6 @@ PUT	/admin/doctors/<id>	Assign doctor to a department
 JWT is generated on login and must be included in headers:
 
 Authorization: Bearer <JWT_TOKEN>
-
-
-Access levels:
-
-Admin → Full access to departments & doctors
-
-Doctor/Member → Limited to their own scope
 
 🛠️ Tech Stack
 
