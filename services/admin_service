@@ -1,0 +1,63 @@
+from models.user import db, User, Department, Doctor
+from services.auth_service import register_user
+
+# Department Services
+def create_department(name):
+    if Department.query.filter_by(name=name).first():
+        return {"message": "Department already exists."}, 409
+
+    department = Department(name=name)
+    db.session.add(department)
+    db.session.commit()
+    return {"message": f"Department '{name}' created successfully."}, 201
+
+
+def list_departments():
+    departments = Department.query.all()
+    return {
+        "departments": [{"id": d.id, "name": d.name} for d in departments]
+    }, 200
+
+
+# Doctor Services
+def onboard_doctor(username, password, department_id=None):
+    user_resp, status = register_user(username, password, 'doctor')
+    if status != 201:
+        return user_resp, status
+
+    user = User.query.filter_by(username=username).first()
+    doctor = Doctor(user_id=user.id, department_id=department_id)
+    db.session.add(doctor)
+    db.session.commit()
+    return {"message": f"Doctor '{username}' onboarded successfully."}, 201
+
+
+def assign_doctor_to_department(doctor_id, department_id):
+    doctor = Doctor.query.get(doctor_id)
+    if not doctor:
+        return {"message": "Doctor not found."}, 404
+
+    department = Department.query.get(department_id)
+    if not department:
+        return {"message": "Department not found."}, 404
+
+    doctor.department_id = department_id
+    db.session.commit()
+    return {"message": f"Doctor {doctor.user.username} assigned to {department.name}."}, 200
+
+
+def list_doctors():
+    doctors = Doctor.query.all()
+    return {
+        "doctors": [
+            {"id": d.id, "username": d.user.username, "department_id": d.department_id}
+            for d in doctors
+        ]
+    }, 200
+
+
+def list_doctors_by_department(department_id):
+    doctors = Doctor.query.filter_by(department_id=department_id).all()
+    return {
+        "doctors": [{"id": d.id, "username": d.user.username} for d in doctors]
+    }, 200
